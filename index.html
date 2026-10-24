@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LPU Campus Navigator — Multi-Color All Routes & iViewd 3D View</title>
+    <style>
+        /* ==========================================
+           DESKTOP/LAPTOP STYLES (Default Setup)
+           ========================================== */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #d9381e;
+            margin: 0 0 5px 0;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .controls-panel {
+            flex: 1;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .map-container {
+            flex: 1.5;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        iframe {
+            width: 100%;
+            height: 550px;
+            border: none;
+            border-radius: 6px;
+            background-color: #e5e7eb;
+        }
+
+        h2, h3, h4 {
+            margin-top: 0;
+            color: #222;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        select, button {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+
+        .gps-btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .gps-btn-group button {
+            padding: 8px;
+            font-size: 12px;
+            background-color: #e2e8f0;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+        }
+
+        .gps-btn-group button:hover {
+            background-color: #cbd5e1;
+        }
+
+        button.primary-btn {
+            background-color: #d9381e;
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        button.primary-btn:hover {
+            background-color: #b82e17;
+        }
+
+        .action-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+
+        .action-links button {
+            width: 48%;
+            background: none;
+            color: #d9381e;
+            border: 1px solid #d9381e;
+            font-weight: 500;
+        }
+
+        .action-links button:hover {
+            background-color: #fff5f5;
+        }
+
+        /* Route Data Result Panel */
+        .route-data-box {
+            background: #fff9f8;
+            border-left: 4px solid #d9381e;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .route-data-box h3 {
+            margin-bottom: 8px;
+            font-size: 18px;
+            color: #b82e17;
+        }
+
+        .route-stats {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Collapsible Legend Menu Component */
+        .legend-dropdown-container {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #fff;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .legend-toggle-btn {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            color: #333;
+            border: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .legend-toggle-btn .arrow-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .legend-toggle-btn.active .arrow-icon {
+            transform: rotate(180deg);
+        }
+
+        .legend-content {
+            display: block; /* Kept visibly expanded on laptop screens by default */
+            padding: 15px;
+            background-color: #ffffff;
+        }
+
+        .legend-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-item:last-child {
+            border-bottom: none;
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .directory-box {
+            margin-top: 20px;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .directory-count {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .map-footer-links {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .map-footer-links a {
+            color: #d9381e;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* ==========================================================================
+           MOBILE-SPECIFIC RESPONSIVE OVERRIDES (Triggers automatically on phone web)
+           ========================================================================== */
+        @media screen and (max-width: 992px) {
+            body {
+                padding: 12px;
+            }
+
+            /* 1. Stacks the side-by-side elements cleanly top-to-bottom */
+            .main-layout {
+                flex-direction: column !important;
+            }
+
+            /* 2. Sets explicit sorting structure so menu parameters stay on top */
+            .controls-panel {
+                width: 100% !important;
+                box-sizing: border-box;
+                order: 1 !important;
+            }
+
+            .map-container {
+                width: 100% !important;
+                box-sizing: border-box;
+                order: 2 !important;
+                margin-top: 15px;
+                padding: 5px;
+            }
+
+            iframe {
+                height: 45vh !important; /* Calibrates safe map visibility window frame */
+            }
+
+            /* 3. Scales tap areas sizes for reliable mobile touch accuracy */
+            select, button {
+                min-height: 46px;
+                font-size: 16px;
+            }
+
+            /* 4. Automatically collapses the color code legend menu on mobile instantiation */
+            .legend-content {
+                display: none;
+            }
+
+            /* Target class called inside the micro toggle script framework */
+            .legend-content.show {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation Section -->
+    <header>
+        <h1>LPU CAMPUS NAVIGATOR</h1>
+        <div class="subtitle">Multi-Color All Routes Sim-Engine & iViewd 3D Campus View</div>
+    </header>
+
+    <div class="main-layout">
+        
+        <!-- Left Configuration Parameters Controls Dashboard Module -->
+        <div class="controls-panel">
+            <h2>Route Configuration</h2>
+            
+            <!-- Starting Coordinates Selection Framework -->
+            <div class="input-group">
+                <label for="startPoint">Starting Point (From):</label>
+                <select id="startPoint">
+                    <option value="Main Gate">Main Gate (Default)</option>
+                    <option value="Current Location">Use My Current Location (GPS)</option>
+                    <option value="Baldev Raj Mittal Park">Baldev Raj Mittal Park (Simulated GPS)</option>
+                    <option value="Uni Mall">Uni Mall</option>
+                    <option value="Hostel BH 3">Hostel BH 3</option>
+                </select>
+                <div class="gps-btn-group">
+                    <button type="button" id="btnGpsReal">Use Real GPS</button>
+                    <button type="button" id="btnGpsSim">Simulate Near Mittal Park</button>
+                </div>
+            </div>
+
+            <!-- Destination Terminal Dropdown Nodes -->
+            <div class="input-group">
+                <label for="destinationPoint">Destination Target (To):</label>
+                <select id="destinationPoint">
+                    <option value="Block 25">Block 25 (Biotechnology & Biosciences)</option>
+                    <option value="Block 38">Block 38 (Academic)</option>
+                    <option value="Block 18">Block 18 (Academic)</option>
+                    <option value="Block 20">Block 20 (Academic)</option>
+                    <option value="Block 39">Block 39 (Academic)</option>
+                    <option value="Block 41-D">Block 41-D (Academic)</option>
+                    <option value="Blocks 55-57">Blocks 55–57 (Academic)</option>
+                    <option value="Uni Mall">Uni Mall</option>
+                    <option value="Shanti Devi Mittal Auditorium">Shanti Devi Mittal Auditorium</option>
+                    <option value="Baldev Raj Mittal Auditorium">Baldev Raj Mittal Auditorium</option>
